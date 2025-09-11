@@ -6,7 +6,7 @@ A simple REST API built with **FastAPI** to predict the result of the logical XO
 
 ## 🚀 Features
 
-- 🧠 PyTorch model trained on the 4 basic XOR cases.
+- 🧠 PyTorch model trained on the 4 basic XOR cases
 - 🔁 Prediction via a `/predict` POST endpoint
 - 🐳 Fully dockerized for easy deployment
 - 📊 Clean JSON response: input, raw_output (probability), final class
