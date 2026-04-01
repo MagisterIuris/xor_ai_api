@@ -1,80 +1,174 @@
 # 🔌 XOR FastAPI API
 
 A simple REST API built with **FastAPI** to predict the result of the logical XOR operation using a neural network model trained with **PyTorch**.
+This project demonstrates how to expose a machine learning model through a clean and modular backend API.
 
 ---
 
 ## 🚀 Features
 
-- 🧠 PyTorch model trained on the 4 basic XOR cases
-- 🔁 Prediction via a `/predict` POST endpoint
-- 🐳 Fully dockerized for easy deployment
-- 📊 Clean JSON response: input, raw_output (probability), final class
+* 🧠 PyTorch neural network trained on XOR logic
+* 🔁 Prediction via a `/predict` POST endpoint
+* 🐳 Fully dockerized for reproducible deployment
+* ⚙️ Clean architecture (API, services, schemas, dependencies)
+* 📊 JSON response: input, raw_output (probability), prediction
 
 ---
 
-## ⚙️ Train the model (optional)
+## 📁 Project Structure
 
-Run the training script:
+```text
+app/
+├── api/
+│   ├── endpoints/        # API routes
+│   │   └── inference_route.py
+│   └── router.py         # Central router
+│
+├── dependencies/         # Dependency injection
+│   └── inference.py
+│
+├── schemas/              # Pydantic models (DTO)
+│   ├── input_data.py
+│   └── prediction_response.py
+│
+├── services/             # Business logic
+│   └── inference_service.py
 
-    python train.py
+config/                   # Configuration (env variables)
+└── config.py
 
-This will train the XOR neural network and save the weights to `saved_model/xor_model.pth`.
+datasets/                 # Training & test data
+├── test_data.py
+└── train_data.py
+
+ml/                       # Model structure and weights 
+├── model/
+│   └── xor_net.py
+└── model_weights/
+    └── xor_model.pth
+
+scripts/                  # Model Training and testing scripts 
+├── test.py
+└── train.py
+
+.dockerignore
+.gitignore
+Dockerfile
+main.py
+README.md
+requirements.txt
+```
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env` file:
+
+```env
+MODEL_PATH=ml/model_weights/xor_model.pth
+```
+
+---
+
+## 🧠 Train the model (optional)
+
+```bash
+python -m scripts.train
+```
+The trained model is automatically saved to: ml/model_weights/xor_model.pth
+
+---
+
+## 🧪 Test the model
+
+```bash
+python -m scripts.test
+```
 
 ---
 
 ## 🚀 Run the API locally (without Docker)
 
-1. Install dependencies:
+### 1. Install dependencies
 
-    pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
-2. Start the FastAPI server:
+### 2. Start the server
 
-    uvicorn main:app --reload
+```bash
+uvicorn main:app --reload
+```
 
-API documentation available at:  
+👉 API docs:
 http://localhost:8000/docs
-
----
-
-## 📬 Test the API with curl
-
-    curl -X POST http://localhost:8000/predict \
-    -H "Content-Type: application/json" \
-    -d '{"x1": 1, "x2": 0}'
-
-Expected response:
-
-    {
-      "input": [1, 0],
-      "raw_output": 0.9998,
-      "prediction": 1
-    }
 
 ---
 
 ## 🐳 Run with Docker
 
-1. Build the image:
+### 1. Build the image
 
-    docker build -t xor-api .
+```bash
+docker build -t xor-api .
+```
 
-2. Run the container:
+### 2. Run the container
 
-    docker run -p 8000:8000 --name xor-api xor-api
+```bash
+docker run --env-file .env -p 8000:8000 xor-api
+```
 
-Access the API at:  
+👉 API docs:
 http://localhost:8000/docs
+
+---
+
+## 📬 Test the API
+
+```bash
+curl -X POST http://localhost:8000/predict \
+-H "Content-Type: application/json" \
+-d '{"x1": 1, "x2": 0}'
+```
+
+### Example response
+
+```json
+{
+  "user_input": [1, 0],
+  "raw_output": 0.9998396635055542,
+  "prediction": 1
+}
+```
 
 ---
 
 ## 📌 Technologies Used
 
-- Python 3.10  
-- FastAPI  
-- PyTorch  
-- Docker  
-- Uvicorn
+* Python 3.11
+* FastAPI
+* PyTorch
+* Docker
+* Matplotlib 
 
-The trained model (`.pth` file) is included and was trained entirely from scratch on synthetic data.
+---
+
+## 🧪 Notes
+
+* 🔄 Model loaded once using FastAPI dependency injection (efficient inference)
+* The trained model weights are included for reproducibility
+* Training, testing scripts and datasets are excluded from the Docker image
+* Environment variables are injected at runtime (`--env-file`)
+
+---
+
+## 🚀 Future Improvements
+
+* Logging & error handling
+* Database for predictions
+* Authentication (JWT)
+
+---
